@@ -15,3 +15,7 @@ services:
         value: 30
       - key: DATABASE_PATH
         value: /tmp/sarcini.db
+      - key: DEMO_USER_EMAIL
+        value: demo@student.usv.ro
+      - key: DEMO_USER_PASSWORD
+        value: parola123

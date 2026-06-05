@@ -23,6 +23,8 @@ DATABASE_PATH = os.environ.get("DATABASE_PATH", "sarcini.db")
 SECRET_KEY = os.environ.get("SECRET_KEY", "cheie-dev-de-inlocuit")
 ALGORITHM = os.environ.get("ALGORITHM", "HS256")
 EXPIRARE_TOKEN_MINUTE = int(os.environ.get("EXPIRARE_TOKEN_MINUTE", "30"))
+DEMO_USER_EMAIL = os.environ.get("DEMO_USER_EMAIL", "demo@student.usv.ro")
+DEMO_USER_PASSWORD = os.environ.get("DEMO_USER_PASSWORD", "parola123")
 
 context_parola = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="autentificare")
@@ -50,6 +52,14 @@ def initializeaza_db():
             FOREIGN KEY (utilizator_id) REFERENCES utilizatori(id)
         )
     """)
+    existent_demo = conn.execute(
+        "SELECT id FROM utilizatori WHERE email = ?", (DEMO_USER_EMAIL,)
+    ).fetchone()
+    if not existent_demo:
+        conn.execute(
+            "INSERT INTO utilizatori (email, parola_hash) VALUES (?, ?)",
+            (DEMO_USER_EMAIL, context_parola.hash(DEMO_USER_PASSWORD)),
+        )
     conn.commit()
     conn.close()
 
@@ -70,7 +80,7 @@ async def durata_de_viata(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Gestionar de sarcini - Lab 05", version="1.0.0", lifespan=durata_de_viata)
+app = FastAPI(title="Gestionar de sarcini - Laborator final 07", version="2.0.0", lifespan=durata_de_viata)
 
 # Permite interfața HTML deschisă prin Live Server sau direct din fișier.
 app.add_middleware(
